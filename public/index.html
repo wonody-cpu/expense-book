@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Neon PostgreSQL에 안전하게 기록하는 개인 가계부">
+  <title>하루살림 — 개인 가계부</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="login-view" class="login-shell">
+    <main class="login-card">
+      <div class="brand-mark">₩</div>
+      <p class="eyebrow">PRIVATE LEDGER</p>
+      <h1>하루살림</h1>
+      <p class="login-copy">오늘의 지출을 차분히 기록하고<br>한 달의 흐름을 한눈에 살펴보세요.</p>
+      <form id="login-form">
+        <label for="password">비밀번호</label>
+        <div class="password-row">
+          <input id="password" type="password" autocomplete="current-password" placeholder="APP_PASSWORD 입력" required>
+          <button type="submit" class="primary">들어가기</button>
+        </div>
+        <p id="login-error" class="form-error" aria-live="polite"></p>
+      </form>
+    </main>
+  </div>
+
+  <div id="app-view" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark small">₩</span><div><strong>하루살림</strong><small>나만의 가계부</small></div></div>
+      <nav><button class="nav-active"><span>⌂</span> 대시보드</button></nav>
+      <button id="logout-button" class="logout">↪ 로그아웃</button>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div><p class="eyebrow">MY EXPENSES</p><h1>대시보드</h1></div>
+        <button id="open-form" class="primary add-button">＋ 지출 추가</button>
+      </header>
+
+      <section class="summary-grid">
+        <article class="total-card">
+          <div class="card-heading"><span>이번 달 지출</span><input id="stats-month" type="month" aria-label="통계 월 선택"></div>
+          <strong id="monthly-total">₩0</strong>
+          <p id="monthly-caption">이번 달의 누적 지출입니다.</p>
+        </article>
+        <article class="chart-card">
+          <div class="card-heading"><span>카테고리별 지출</span><span class="muted">월 기준</span></div>
+          <div id="category-chart" class="chart"></div>
+        </article>
+      </section>
+
+      <section class="ledger-card">
+        <div class="ledger-header">
+          <div><h2>지출 내역</h2><p>기록한 모든 지출을 확인하고 관리하세요.</p></div>
+          <div class="filters">
+            <label>날짜 검색 <input id="date-filter" type="date"></label>
+            <button id="clear-filter" class="ghost">초기화</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>날짜</th><th>항목</th><th>카테고리</th><th class="amount">금액</th><th><span class="sr-only">관리</span></th></tr></thead>
+            <tbody id="expense-list"></tbody>
+          </table>
+          <div id="empty-state" class="empty" hidden><span>✦</span><strong>아직 기록이 없어요</strong><p>첫 지출을 추가해 한 달의 흐름을 만들어 보세요.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="expense-dialog">
+    <form id="expense-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">EXPENSE</p><h2 id="dialog-title">지출 추가</h2></div><button type="button" id="close-dialog" class="icon-button" aria-label="닫기">×</button></div>
+      <input id="expense-id" type="hidden">
+      <div class="form-grid">
+        <label>날짜<input id="spent-on" type="date" required></label>
+        <label>금액<input id="amount" type="number" min="1" step="1" placeholder="0" required></label>
+        <label class="wide">항목<input id="item" maxlength="120" placeholder="예: 점심 식사" required></label>
+        <label class="wide">카테고리<select id="category" required><option value="">선택해 주세요</option><option>식비</option><option>교통</option><option>쇼핑</option><option>주거</option><option>건강</option><option>여가</option><option>교육</option><option>기타</option></select></label>
+      </div>
+      <p id="form-error" class="form-error" aria-live="polite"></p>
+      <div class="dialog-actions"><button type="button" id="cancel-dialog" class="ghost">취소</button><button type="submit" class="primary">저장하기</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
