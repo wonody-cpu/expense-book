@@ -25,6 +25,22 @@ function ensureSchema() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = 'expenses' AND column_name = 'date'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = 'expenses' AND column_name = 'spent_on'
+        ) THEN
+          ALTER TABLE expenses RENAME COLUMN date TO spent_on;
+        END IF;
+      END $$;
+
+      ALTER TABLE expenses ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+      ALTER TABLE expenses ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
       CREATE INDEX IF NOT EXISTS expenses_spent_on_idx ON expenses (spent_on DESC);
       CREATE INDEX IF NOT EXISTS expenses_category_idx ON expenses (category);
     `).catch((error) => {
